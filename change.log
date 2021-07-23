@@ -1,3 +1,5 @@
 2021-07-19 1920 Started project, copied in template
 2021-07-20 1758 Created plan file
            1806 Created README file
+2021-07-22 1724 Created csvtojson.py
+           1918 Can open a file and display all records
