@@ -74,26 +74,54 @@ def fieldify(h, r):
             quoted = True
             q_char = c
         elif c == ',':
-            d[h[f]] = curr.strip()
+            d[h[f]] = typify(curr.strip())
             curr = ''
             f += 1
         else:
             curr += c
-    d[h[f]] = curr.strip() # got to make sure you get that last record
+    d[h[f]] = typify(curr.strip()) # got to make sure you get that last record
     return d
 
+def typify(s):
+    ''' typify:
+            return properly typed data from a formatted string
+        expects:
+            s:  str; formatted text containing data
+        returns:
+            value:  *; a list, dict, tuple, int or float containing the data in s.
+    '''
+    capsules={'[': listify,'{': dictify,'(': tuplify}
+    value = s
+    if s == '':
+        value = None
+    elif s.isnumeric():
+        value = int(s)
+    elif s[0] in capsules:
+        value = capsules[s[0]](s[1:-1])
+    return value
+
+def listify(s):
+    return s
+
+def dictify(s):
+    return s
+
+def tuplify(s):
+    return s
 def main():
     base_dir = '/data/data/com.termux/files/home/docs/dailies'
     csv_tasks = 'tasks.csv'
     csv_fqn = build_file_name(base_dir, csv_tasks)
     
     records = get_csv(csv_fqn)
-    json_var={}
+    tasks = []
+    json_var={'name': 'primary', 'items': tasks}
     csv_fields = get_header(records[0])
     for record in records[1:]: 
         fields = fieldify(csv_fields, record)
-        for field in fields:
-            print(f'{field}:\n\t{fields[field]}')
+        task_id = fields.pop('task_id')
+        print(f'\'task_id\': {task_id}, \'attributes\': {fields}')
+    print(json_var)
 
 if __name__ == '__main__':
     main()

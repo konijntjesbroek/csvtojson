@@ -4,3 +4,6 @@
 2021-07-22 1724 Created csvtojson.py
            1918 Can open a file and display all records
            2017 Split records into named fields
+           2227 have created the ablity to return None and int, but working on
+                building nested lists, dictionaries, and tuples and accounting
+                for null values.
