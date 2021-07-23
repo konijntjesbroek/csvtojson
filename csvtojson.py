@@ -47,18 +47,53 @@ def get_csv(csv):
             records.append(record)
     
     return records
+def get_header(h):
+    return [f.strip() for f in h.split(',')]
+
+def fieldify(h, r):
+    ''' fieldify:
+            separated csv records according to a record
+        expects:
+            h:  list; a list containing the csv field names
+            r:  str; a valid csv record
+        returns:
+            d:  dict: a dictionary of fields
+    '''
+    d = {}
+    curr = ''
+    quoted = False
+    q_char = ''
+    f = 0
+    for c in r:
+        if quoted:
+            if c == q_char:
+                quoted = False
+            else:
+                curr += c
+        elif c == '"' or c == "'":
+            quoted = True
+            q_char = c
+        elif c == ',':
+            d[h[f]] = curr.strip()
+            curr = ''
+            f += 1
+        else:
+            curr += c
+    d[h[f]] = curr.strip() # got to make sure you get that last record
+    return d
 
 def main():
     base_dir = '/data/data/com.termux/files/home/docs/dailies'
     csv_tasks = 'tasks.csv'
     csv_fqn = build_file_name(base_dir, csv_tasks)
     
-    print(csv_fqn)
-    
     records = get_csv(csv_fqn)
     json_var={}
-    
-    print(records, json_var)
+    csv_fields = get_header(records[0])
+    for record in records[1:]: 
+        fields = fieldify(csv_fields, record)
+        for field in fields:
+            print(f'{field}:\n\t{fields[field]}')
 
 if __name__ == '__main__':
     main()
